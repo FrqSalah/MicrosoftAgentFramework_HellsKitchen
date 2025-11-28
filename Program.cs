@@ -21,7 +21,7 @@ if (string.IsNullOrEmpty(apiKey) || apiKey == "VOTRE_CLE_API_ICI")
 }
 
 var client = new OpenAIClient(apiKey);
-string modelId = "gpt-5-nano";
+string modelId = "gpt-5-mini";
 
 // Fonction locale pour afficher un message stylé
 void RenderMessage(string role, string text, string color)
@@ -57,8 +57,8 @@ var marie = client.GetChatClient(modelId).CreateAIAgent(
                     "Propose juste le nom de la recette et la liste des ingrédients."
 );
 
-var gordon = client.GetChatClient(modelId).CreateAIAgent(
-    instructions: "Tu es le Chef Gordon. Tu es EXIGEANT. " +
+var philippe = client.GetChatClient(modelId).CreateAIAgent(
+    instructions: "Tu es le Chef Philippe. Tu es EXIGEANT. Tu es reconnu par ton gôut de l'effort et la rigueur. " +
                   "1. Vérifie l'ingrédient principal avec l'outil CheckIngredient. " +
                   "2. Si MANQUANT -> Refuse violemment. " +
                   "3. Si OK -> Dis 'VALIDÉ TECHNIQUEMENT' et demande l'avis du client.",
@@ -68,7 +68,7 @@ var gordon = client.GetChatClient(modelId).CreateAIAgent(
 var manager = client.GetChatClient(modelId).CreateAIAgent(
     instructions: "Tu es le Manager du restaurant. Tu as le dernier mot sur l'équipe. " +
                   "Si le gagnant est félicité -> Annonce sa promotion avec enthousiasme. " +
-                  "Si le perdant est mentionné -> Vire-le avec une punchline cinglante style Gordon Ramsay. " +
+                  "Si le perdant est mentionné -> Vire-le avec une punchline cinglante. " +
                   "Sois théâtral et mémorable !"
 );
 
@@ -149,37 +149,39 @@ while ((!samyValidated || !marieValidated) && attempts < maxAttempts)
     // Gordon valide les propositions
     if (!samyValidated && !string.IsNullOrEmpty(samyProposal))
     {
-        var samyCritique = await gordon.RunAsync($"Analyse la recette de SAMY : \"{samyProposal}\". Vérifie le stock !");
+        var samyCritique = await philippe.RunAsync($"Analyse la recette de SAMY : \"{samyProposal}\". Vérifie le stock !");
         var samyCritiqueText = samyCritique.Messages.LastOrDefault()?.Text ?? "";
         
         if (samyCritiqueText.Contains("VALIDÉ"))
         {
             samyValidated = true;
             proposalHistory.Add(("Samy", samyProposal, true));
-            AnsiConsole.MarkupLine("[green]✓ Samy validé par Gordon ![/]");
+            AnsiConsole.MarkupLine("[green]✓ Samy validé par Philippe ![/]");
         }
         else
         {
             proposalHistory.Add(("Samy", samyProposal, false));
-            AnsiConsole.MarkupLine("[red]✗ Samy refusé par Gordon[/]");
+            RenderMessage("🤬 PHILIPPE - REFUS SAMY", samyCritiqueText, "red");
+            AnsiConsole.MarkupLine("[red]✗ Samy refusé par Philippe[/]");
         }
     }
     
     if (!marieValidated && !string.IsNullOrEmpty(marieProposal))
     {
-        var marieCritique = await gordon.RunAsync($"Analyse la recette de MARIE : \"{marieProposal}\". Vérifie le stock !");
+        var marieCritique = await philippe.RunAsync($"Analyse la recette de MARIE : \"{marieProposal}\". Vérifie le stock !");
         var marieCritiqueText = marieCritique.Messages.LastOrDefault()?.Text ?? "";
         
         if (marieCritiqueText.Contains("VALIDÉ"))
         {
             marieValidated = true;
             proposalHistory.Add(("Marie", marieProposal, true));
-            AnsiConsole.MarkupLine("[green]✓ Marie validée par Gordon ![/]");
+            AnsiConsole.MarkupLine("[green]✓ Marie validée par Philippe ![/]");
         }
         else
         {
             proposalHistory.Add(("Marie", marieProposal, false));
-            AnsiConsole.MarkupLine("[red]✗ Marie refusée par Gordon[/]");
+            RenderMessage("🤬 PHILIPPE - REFUS MARIE", marieCritiqueText, "red");
+            AnsiConsole.MarkupLine("[red]✗ Marie refusée par Philippe[/]");
         }
     }
     
@@ -268,7 +270,7 @@ statsTable.AddRow("✅ Samy - Taux succès", $"{(proposalHistory.Count(h => h.ch
 statsTable.AddRow("✅ Marie - Taux succès", $"{(proposalHistory.Count(h => h.chef == "Marie" && h.validated) * 100.0 / Math.Max(1, proposalHistory.Count(h => h.chef == "Marie"))):F0}%");
 statsTable.AddRow("👨‍🍳 Agent Samy", $"{proposalHistory.Count(h => h.chef == "Samy")} propositions");
 statsTable.AddRow("👩‍🍳 Agent Marie", $"{proposalHistory.Count(h => h.chef == "Marie")} propositions");
-statsTable.AddRow("🤬 Agent Gordon", $"{proposalHistory.Count} validations");
+statsTable.AddRow("🤬 Agent Philippe", $"{proposalHistory.Count} validations");
 statsTable.AddRow("👔 Agent Manager", "2 décisions finales");
 statsTable.AddRow("🏆 Gagnant", winner == "Samy" ? "[cyan1]SAMY[/]" : "[magenta1]MARIE[/]");
 

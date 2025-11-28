@@ -13,16 +13,16 @@ Ce projet démontre l'orchestration de **4 agents IA distincts** dans un scénar
 
 - **👨‍🍳 Samy** : Chef créatif et audacieux, spécialiste des recettes orientales
 - **👩‍🍳 Marie** : Cuisinière perfectionniste, adepte des recettes classiques raffinées  
-- **🤬 Gordon** : Chef validateur exigeant avec accès aux outils (vérification du frigo)
+- **🤬 Philippe** : Chef validateur exigeant avec accès aux outils (vérification du frigo)
 - **👔 Manager** : Décideur final qui prononce promotions et licenciements
 
 ## ✨ Fonctionnalités
 
 ### Mode Battle Interactif
 - 🥊 **Propositions parallèles** : Les deux chefs créent simultanément leurs recettes
-- ✅ **Validation stricte** : Gordon vérifie les ingrédients via l'outil `CheckIngredient`
+- ✅ **Validation stricte** : Philippe vérifie les ingrédients via l'outil `CheckIngredient`
 - 🗳️ **Vote public** : Vous choisissez le gagnant (touche `S` pour Samy, `M` pour Marie)
-- 🎭 **Décision finale** : Le manager annonce promotions et licenciements style Gordon Ramsay
+- 🎭 **Décision finale** : Le manager annonce promotions et licenciements style Philippe Echebest
 
 ### Interface Rich Console
 - 📊 **Tableaux de bord en temps réel** avec graphiques et statistiques
@@ -33,7 +33,7 @@ Ce projet démontre l'orchestration de **4 agents IA distincts** dans un scénar
 ### Logique Robuste
 - 🔄 **Boucle d'essais** : Maximum 5 tentatives avec compteur visuel
 - 💡 **Hints adaptatifs** : Indices automatiques sur la dernière tentative
-- 🛠️ **Tool Integration** : Gordon utilise `FridgeTool` pour vérifier le stock
+- 🛠️ **Tool Integration** : Philippe utilise `FridgeTool` pour vérifier le stock
 
 ## 🚀 Installation
 
@@ -93,7 +93,7 @@ dotnet run
          ├──► 👩‍🍳 Agent Marie (Classic)  
          │         └─► Génère recettes classiques
          │
-         ├──► 🤬 Agent Gordon (Validator)
+         ├──► 🤬 Agent Philippe (Validator)
          │         └─► Vérifie via FridgeTool
          │              └─► CheckIngredient()
          │
@@ -113,8 +113,8 @@ Tentative 1/5
 │ Tajine de Poulet aux Épices...  │ │ Poulet Rôti aux Herbes...       │
 └─────────────────────────────────┘ └─────────────────────────────────┘
 
-✓ Samy validé par Gordon !
-✓ Marie validée par Gordon !
+✓ Samy validé par Philippe !
+✓ Marie validée par Philippe !
 
 🏆 Vote Public - Samy vs Marie
 Appuyez sur S pour 'SAMY' ou sur M pour 'MARIE'
@@ -149,8 +149,8 @@ var samy = client.GetChatClient(modelId).CreateAIAgent(
     instructions: "Tu es Samy, un cuisinier CRÉATIF..."
 );
 
-var gordon = client.GetChatClient(modelId).CreateAIAgent(
-    instructions: "Tu es le Chef Gordon...",
+var Philippe = client.GetChatClient(modelId).CreateAIAgent(
+    instructions: "Tu es le Chef Philippe...",
     tools: [AIFunctionFactory.Create(new FridgeTool().CheckIngredient)]
 );
 ```
